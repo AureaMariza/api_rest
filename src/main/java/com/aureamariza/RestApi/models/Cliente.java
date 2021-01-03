@@ -1,10 +1,11 @@
 package com.aureamariza.RestApi.models;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.xml.crypto.Data;
+import org.hibernate.validator.constraints.NotBlank;
+import org.hibernate.validator.constraints.br.CPF;
+
+import javax.persistence.*;
+import javax.validation.constraints.*;
+
 import java.util.Date;
 
 @Entity
@@ -13,12 +14,21 @@ public class Cliente {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
+    @NotEmpty(message = "O nome não pode ser vazio.")
+    @Size(min=3, max = 255)
     private String name;
 
+    @CPF
+    @NotEmpty
     private String cpf;
 
+    @Email
+    @NotEmpty
     private String email;
 
+    @Past
+    @NotNull
+    @Temporal(TemporalType.DATE)
     private Date data;
 
     public Cliente(){}

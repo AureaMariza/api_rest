@@ -3,8 +3,11 @@ package com.aureamariza.RestApi.resources;
 import com.aureamariza.RestApi.models.Cliente;
 import com.aureamariza.RestApi.services.ClientService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -18,6 +21,13 @@ public class ClientResource {
         this.clientService = clientService;
     }
 
+    @PostMapping
+    @ResponseBody
+    @ResponseStatus(code = HttpStatus.CREATED)
+    public Cliente create(@Valid @RequestBody Cliente cliente){
+        return this.clientService.create(cliente);
+    }
+
     @GetMapping
     @ResponseBody
     public List<Cliente> findAll(){
@@ -26,25 +36,23 @@ public class ClientResource {
 
     @GetMapping(value = "/{id}")
     @ResponseBody
-    public Cliente find(@PathVariable(value = "id") Integer id){
-        return this.clientService.find();
+    public ResponseEntity<Cliente> find(@PathVariable(value = "id") Integer id) {
+        var cliente = this.clientService.find(id);
+        if (cliente != null) {
+            return new ResponseEntity<Cliente>(cliente, HttpStatus.OK);
+        }
+
+        return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
     }
 
-    @PostMapping
+    @PutMapping(value = "/{id}")
     @ResponseBody
-    public Cliente create(@RequestBody Cliente cliente){
-        return this.clientService.create(cliente);
-    }
+    public ResponseEntity<Cliente> update(@PathVariable(value = "id") Integer id, @RequestBody Cliente cliente) {
+        var clienteUpdated = this.clientService.update(id, cliente);
 
-    @PutMapping(value = "/id")
-    @ResponseBody
-    public Cliente update(@PathVariable(value = "id") Integer id){
-        return this.clientService.update();
+        if (clienteUpdated == null) {
+            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+        }
+        return new ResponseEntity<>(clienteUpdated, HttpStatus.OK);
     }
-    @DeleteMapping(value = "/id")
-    @ResponseBody
-    public void  delete(@PathVariable(value = "id") Integer id){
-
-    }
-
 }

@@ -25,7 +25,11 @@ public class ClientServiceImpl implements ClientService {
     }
 
     @Override
-    public Cliente find() {
+    public Cliente find(Integer id) {
+        var cliente = this.clientRepository.findById(id);
+        if (cliente.isPresent()) {
+            return cliente.get();
+        }
         return null;
     }
 
@@ -35,12 +39,20 @@ public class ClientServiceImpl implements ClientService {
     }
 
     @Override
-    public Cliente update() {
-        return null;
+    public Cliente update(Integer id, Cliente cliente) {
+        if (!this.clientRepository.existsById(id)) {
+            return null;
+        }
+        cliente.setId(id);
+        this.clientRepository.save(cliente);
+        return cliente;
     }
 
     @Override
-    public void delete() {
+    public void delete(Integer id) {
+        if (this.clientRepository.existsById(id)) {
+            this.clientRepository.deleteById(id);
+        }
     }
 
 
